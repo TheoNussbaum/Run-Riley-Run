@@ -28,13 +28,17 @@ menu_bg_image = pygame.image.load(r".\images\bg_city_menu.png").convert()
 title_image = pygame.image.load(r".\images\title.png")
 start_unpressed_image = pygame.image.load(r".\images\start_button_unpressed.png")
 start_pressed_image = pygame.image.load(r".\images\start_button_pressed.png")
+rules_unpressed_image = pygame.image.load(r".\images\rules_button_unpressed.png")
+rules_pressed_image = pygame.image.load(r".\images\rules_button_pressed.png")
 
 Run_Menu = True
 menu_close = False
 start_button = Button(662, 489, start_unpressed_image)
+rules_button = Button(330, 522, rules_unpressed_image)
 
 # Class du joueur
 class Player:
+    # Position du joueur par défaut
     x_pos = 40
     y_pos = 795
 
@@ -171,11 +175,7 @@ while Run_Menu:
     screen.blit(menu_bg_image, (0, 0))
     screen.blit(title_image, (11, 52))
     state = start_button.draw(screen)
-
-    if start_button.draw(screen):
-        print("START!")
-
-    print(start_button.clicked)
+    rules = rules_button.draw(screen)
 
     # Si on à ordonné de fermer la fenêtre et que l'image à déjà changé alors on ferme le menu et on ouvre le jeu
     if menu_close and start_button.image == start_pressed_image:
@@ -188,6 +188,10 @@ while Run_Menu:
         start_button = Button(665, 504, start_pressed_image)
         menu_close = True
 
+    if rules_button.clicked:
+        rules_button = Button(782, 803, rules_pressed_image)
+    else:
+        rules_button = Button(782, 803, rules_unpressed_image)
 
     pygame.display.flip()
 
