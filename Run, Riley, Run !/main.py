@@ -95,8 +95,8 @@ class Player:
         self.player_rect.y = self.y_pos
 
         # Variables pour les parametres du saut
-        self.gravity = 1
-        self.jump_height = 25
+        self.gravity = 0.59
+        self.jump_height = 18.4
         self.velocity = self.jump_height
         self.run_index = 48
         self.index_speed = self.run_index
@@ -251,7 +251,7 @@ def Run_Riley_Run():
         user_input = pygame.key.get_pressed()
 
         # Quitter le jeu avec la touche Q
-        if user_input[pygame.K_q]:
+        if user_input[pygame.K_ESCAPE]:
             game_on = False
 
         # Affichage de l'arrière plan
