@@ -3,6 +3,7 @@ Auteur : Carlos Ferreira & Théo Nussbaum
 Date : 27.09.2024
 Projet : Run, Riley, Run!
 Description : Fichier du système du jeu.
+Nussbaum
 """
 import pygame
 import random
