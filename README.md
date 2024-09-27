@@ -17,10 +17,12 @@
 
 ### Prérequis
 - **Python 3.x**
-- **Pygame** installé (si nécessaire, vous pouvez l’installer avec la commande suivante) :
+- **Librairie Pygame** installé (si nécessaire, vous pouvez l’installer avec la commande suivante) :
   ```bash
   pip install pygame
   ```
+- **Librairie Random**
+
 ### Étapes pour lancer le jeu
 1. Clonez ce dépôt sur votre machine locale
 2. Accédez au dossier du jeu
