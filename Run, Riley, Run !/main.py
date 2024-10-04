@@ -636,8 +636,4 @@ while start_menu:
     # FPS
     timer.tick(fps)
 
-<<<<<<< Updated upstream
 Choice_Characters_Menu()
-=======
-Choice_Characters_Menu()
->>>>>>> Stashed changes
