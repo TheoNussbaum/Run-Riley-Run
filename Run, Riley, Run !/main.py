@@ -4,6 +4,8 @@ Date : 04.10.2024
 Projet : Run, Riley, Run!
 Description : Fichier du système du jeu.
 """
+import pygame.image
+
 from imports import *
 
 pygame.init()
@@ -91,6 +93,8 @@ rules_button_pressed_image = pygame.image.load(r".\images\rules_button_pressed.p
 # Characters
 characters_bg_image = pygame.image.load(r".\images\bg_character_menu.png")
 
+bg_rules = pygame.image.load(r".\images\bg_rules.png")
+
 left_select_buttons = [pygame.image.load(r".\images\select_left_little.png"),
                        pygame.image.load(r".\images\select_left_big.png")]
 
@@ -129,9 +133,11 @@ start_menu = True
 menu_close = False
 game_pause = False
 game_on = True
+rules = False
 
 y_pause = 488
 x_pause = 659
+
 
 #######################################################################################################################
 ############################################### Classe du joueur ######################################################
@@ -166,7 +172,7 @@ class Player:
 
         # Variables pour les parametres du saut
         self.gravity = 0.8
-        self.jump_height = 25
+        self.jump_height = 23
         self.velocity = self.jump_height
         self.run_index = 48
         self.index_speed = self.run_index
@@ -205,7 +211,6 @@ class Player:
             self.player_run = True
             self.player_jump = False
 
-
     # Fonction pour se baisser
     def bending_down(self):
         if not game_pause:
@@ -243,6 +248,7 @@ class Player:
     def draw(self, screen_parameter):
         screen_parameter.blit(self.image, (self.player_rect.x, self.player_rect.y))
 
+
 #######################################################################################################################
 ################################### Classe qui permet de créer des obstacles ##########################################
 #######################################################################################################################
@@ -268,6 +274,7 @@ class Obstacle:
     # Affiche l'obstacle sur l'écran
     def draw(self, window):
         screen.blit(self.image[self.type], self.rect)
+
 
 #######################################################################################################################
 ####################################### Classes appartenant aux obstacles #############################################
@@ -316,10 +323,12 @@ def quit_game():
     global game_on
     game_on = False
 
+
 def resume_game():
     global game_pause, game_speed, game_speed_backup
     game_speed = game_speed_backup
     game_pause = False
+
 
 #######################################################################################################################
 ########################################## Fonction de lancement du jeu ###############################################
@@ -403,16 +412,6 @@ def Game():
         # Quitter le jeu avec la touche Q
         if user_input[pygame.K_q]:
             game_on = False
-        if user_input[pygame.K_LEFT]:
-            x_pause -= 1
-        if user_input[pygame.K_RIGHT]:
-            x_pause += 1
-        if user_input[pygame.K_UP]:
-            y_pause -= 1
-        if user_input[pygame.K_DOWN]:
-            y_pause += 1
-
-        #print(f"x = {x_pause} y = {y_pause}")
 
         # Affichage de l'arrière plan
         screen.blit(sky, (sky_bg_x, 0))
@@ -456,7 +455,8 @@ def Game():
                 if random.randint(0, 2) == 0:
                     obstacles.append(Box(box_obstacles))
                 elif random.randint(0, 2) == 1:
-                    obstacles.append(Bird(bird_obstacles[temp]))
+                    obstacles.append(Box(box_obstacles))
+                    #obstacles.append(Bird(bird_obstacles[temp]))
                 elif random.randint(0, 2) == 2:
                     obstacles.append(Tire(pneu_obstacle))
 
@@ -505,6 +505,7 @@ def Game():
     # QUIT
     pygame.quit()
 
+
 #######################################################################################################################
 ########################################## Lancement du Menu Personnages ##############################################
 #######################################################################################################################
@@ -512,8 +513,6 @@ def Game():
 def Choice_Characters_Menu():
     characters_menu = True
     timer = pygame.time.Clock()
-    x = 430
-    y = 435
     temp = 0
 
     left_choice = Button(575, 435, left_select_buttons[0])
@@ -521,7 +520,6 @@ def Choice_Characters_Menu():
     character_1 = Button(564, 158, character_choice_1[0])
     character_2 = Button(430, 435, character_choice_2[0])
     character_3 = Button(1395, 475, character_choice_3[0])
-
 
     # Boucler tant que le jeu n'est pas fini
     while characters_menu:
@@ -535,16 +533,6 @@ def Choice_Characters_Menu():
         # Quitter le jeu avec la touche Q
         if user_input[pygame.K_q]:
             characters_menu = False
-        if user_input[pygame.K_LEFT]:
-            x -= 5
-        if user_input[pygame.K_RIGHT]:
-            x += 5
-        if user_input[pygame.K_UP]:
-            y -= 5
-        if user_input[pygame.K_DOWN]:
-            y += 5
-
-        #print(f"x = {x} & y = {y}")
 
         # Affichage de l'arrière plan
         screen.blit(characters_bg_image, (0, 0))
@@ -592,16 +580,32 @@ def Choice_Characters_Menu():
 ############################################# Lancement du Menu Start #################################################
 #######################################################################################################################
 
+
 def quit_start_menu():
     global start_menu
     start_menu = False
 
+
+def turn_true_rules():
+    global rules
+    rules = True
+
+
+def turn_false_rules():
+    global rules
+    rules = False
+
+
+temp_player = Player()
+
 while start_menu:
     timer = pygame.time.Clock()
-    wait = 0
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             start_menu = False
+
+    game_pause = False
 
     # Récupere la position de la souris
     mouse_pos = pygame.mouse.get_pos()
@@ -612,21 +616,37 @@ while start_menu:
     if pressed[pygame.K_q]:
         start_menu = False
 
-    # Affichage des images
-    screen.blit(start_menu_bg_image, (0, 0))
-    screen.blit(start_menu_title_image, (11, 52))
-    start_button.draw(screen)
-    rules_button.draw(screen)
+    if not rules:
+        # Affichage des images
+        screen.blit(start_menu_bg_image, (0, 0))
+        screen.blit(start_menu_title_image, (11, 52))
+        start_button.draw(screen)
+        rules_button.draw(screen)
 
-    # On change l'image du bouton
-    if start_button.clicked:
-        start_button = Button(662, 489, start_button_pressed_image)
-        t_start_menu = Timer(0.15, quit_start_menu)
-        t_start_menu.start()
+        # On change l'image du bouton
+        if start_button.clicked:
+            start_button = Button(662, 489, start_button_pressed_image)
+            t_start_menu = Timer(0.15, quit_start_menu)
+            t_start_menu.start()
+    else:
+        screen.blit(bg_rules, (0, 0))
+        temp_player.player_rect.x = 800
+
+        temp_player.draw(screen)
+        temp_player.update(pressed)
+
+        back_button = Button(1500, 500, quit_button_unpressed)
+        back_button.draw(screen)
+        if back_button.clicked:
+            back_button = Button(1500, 500, quit_button_pressed)
+            t_rules = Timer(0.15, turn_false_rules)
+            t_rules.start()
 
     # On change l'image du bouton
     if rules_button.clicked:
         rules_button = Button(782, 803, rules_button_pressed_image)
+        t_rules = Timer(0.15, turn_true_rules)
+        t_rules.start()
     else:
         rules_button = Button(782, 803, rules_button_unpressed_image)
 
