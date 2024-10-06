@@ -33,5 +33,5 @@
 - Flèche directionnel vers le bas : Esquiver
 
 ## Auteurs
-- Nussbaum Théo
-- Ferreira Carlos
+- Nussbaum Théo (@TheoNussbaum)
+- Ferreira Carlos (@CarlosFerreiraCPNV)
