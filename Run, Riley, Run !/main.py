@@ -5,6 +5,7 @@ Projet : Run, Riley, Run!
 Description : Fichier du système du jeu.
 """
 import pygame.image
+from pygame.examples.aliens import Player
 
 from imports import *
 
@@ -118,6 +119,8 @@ resume_button_pressed = pygame.image.load(r".\images\Resume_pressed.png")
 
 quit_button_unpressed = pygame.image.load(r".\images\Quit_Unpressed.png")
 quit_button_pressed = pygame.image.load(r".\images\Quit_Pressed.png")
+
+play_again_button_unpressed = pygame.image.load(r".\images\Play_Again_Unpressed.png")
 
 start_button = Button(662, 489, start_button_unpressed_image)
 rules_button = Button(782, 803, rules_button_unpressed_image)
@@ -335,7 +338,7 @@ def resume_game():
 #######################################################################################################################
 
 def Game():
-    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on
+    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on, obstacle
     timer = pygame.time.Clock()
 
     # Joueur
@@ -355,7 +358,7 @@ def Game():
     font = pygame.font.Font(r".\police\Myfont-Regular.ttf", 50)
 
     def Score():
-        global game_score, game_speed, game_speed_backup
+        global game_score, game_speed, game_speed_backup, start_menu
         text_x = 1850
         text_score_x = 1685
         text_color = (255, 248, 189)
@@ -465,6 +468,7 @@ def Game():
         for obstacle in obstacles:
             obstacle.draw(screen)
             obstacle.update()
+
             if player.player_rect.colliderect(obstacle.rect):
                 pygame.draw.rect(screen, (255, 0, 0), player.player_rect, 2)
                 player.player_alive = False
@@ -495,6 +499,11 @@ def Game():
 
         if not player.player_alive:
             screen.blit(game_over, (0, 0))
+            play_again_button = Button(0, 0, play_again_button_unpressed)
+            play_again_button.draw(screen)
+
+            if play_again_button.clicked:
+                player.player_alive = True
 
         # FPS
         timer.tick(fps)
@@ -625,12 +634,12 @@ while start_menu:
 
         # On change l'image du bouton
         if start_button.clicked:
-            start_button = Button(662, 489, start_button_pressed_image)
+            start_button = Button(602, 489, start_button_pressed_image)
             t_start_menu = Timer(0.15, quit_start_menu)
             t_start_menu.start()
     else:
         screen.blit(bg_rules, (0, 0))
-        temp_player.player_rect.x = 800
+        temp_player.player_rect.x = 830
 
         temp_player.draw(screen)
         temp_player.update(pressed)
