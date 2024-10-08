@@ -22,11 +22,18 @@
   pip install pygame
   ```
 - **Librairie Random**
+- **Librairie mysql-connector** installé (si nécessaire, vous pouvez l’installer avec la commande suivante) :
+  ```bash
+  pip install mysql-connector
+  ```
 
 ### Étapes pour lancer le jeu
-1. Clonez ce dépôt sur votre machine locale
-2. Accédez au dossier du jeu
-3. Lancez le fichier main.py
+1. Installez MySQL Server sur votre machine 
+2. Installez un client SQL (ex. HediSQL,...)
+3. Installez Python 
+4. Clonez ce dépôt sur votre machine locale (GitHub Desktop)
+5. Accédez au dossier du jeu
+6. Lancez le fichier main.py
 
 ## Commandes du jeu
 - Flèche directionnel vers le haut : Sauter
