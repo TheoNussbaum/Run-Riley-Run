@@ -31,4 +31,12 @@ def edit_score(best_score):
     print(best_score)
     cursor.close()
 
+def search_unlock():
+    query = "SELECT score_to_unlock FROM character"
+    cursor = db_connection.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchone()  # Récupération de toutes les lignes de résultats
+    cursor.close()
+    return rows
+
 
