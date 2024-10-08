@@ -6,6 +6,7 @@ Description : Fichier du système du jeu.
 """
 import pygame.image
 from pygame.examples.aliens import Player
+from database import *
 
 from imports import *
 
@@ -397,6 +398,8 @@ def Game():
             screen.blit(text_score, text_score_rect)
             screen.blit(text, text_rect)
 
+            return game_score
+
     # Boucler tant que le jeu n'est pas fini
     while game_on:
         x_quit_coords = 787
@@ -428,12 +431,12 @@ def Game():
         player.draw(screen)
         player.update(user_input)
 
-        Score()
-
         # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset on le mettant à nouveau au début (-1521)
         if player.player_alive:
             if user_input[pygame.K_ESCAPE]:
                 game_pause = True
+
+            game_current_score = Score()
 
             if not game_pause:
                 # Vitesse à laquelle le arrière plan vas défiler
@@ -496,11 +499,18 @@ def Game():
         else:
             resume_button_img = resume_button_unpressed
 
+        print(game_current_score)
 
         if not player.player_alive:
             screen.blit(game_over, (0, 0))
             play_again_button = Button(0, 0, play_again_button_unpressed)
             play_again_button.draw(screen)
+
+            tuple_best_score = search_best_score()
+            int_best_score = int(tuple_best_score[0])
+
+            if game_current_score > int_best_score:
+                edit_score(int(game_current_score))
 
             if play_again_button.clicked:
                 player.player_alive = True
