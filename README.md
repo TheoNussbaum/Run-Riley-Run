@@ -11,7 +11,7 @@
 - Univers graphique inspiré de la série animée *The Boondocks*.
 - Commandes simples et intuitives (sauter, esquiver).
 - Gestion du score et de la progression du joueur.
-- Personnages débloquables (En fonction de notre BestScore).
+- Personnages débloquables (En fonction du BestScore).
 
 ## Installation
 
@@ -26,14 +26,20 @@
   ```bash
   pip install mysql-connector
   ```
+- **GitHub Desktop**
+- **MySQL Server**
+- **Client SQL**, par example HediSQL
+- **Connection a la DB** pour interagire avec la base de données executer cette requete dans votre client SQL (changer le "utilisateur" et le "mot de passe" par vos valeurs)
+  ```SQL
+  ALTER USER 'utilisateur'@'localhost' IDENTIFIED WITH mysql_native_password BY 'mot_de_passe';
+  FLUSH PRIVILEGES;
+  ```
+  Cette requete change le protocole de chiffrage de votre mot de passe, car mysql-connector ne support pas celui de base.
 
 ### Étapes pour lancer le jeu
-1. Installez MySQL Server sur votre machine 
-2. Installez un client SQL (ex. HediSQL,...)
-3. Installez Python 
-4. Clonez ce dépôt sur votre machine locale (GitHub Desktop)
-5. Accédez au dossier du jeu
-6. Lancez le fichier main.py
+1. Clonez ce dépôt sur votre machine locale (GitHub Desktop)
+2. Accédez au dossier du jeu
+3. Lancez le fichier main.py
 
 ## Commandes du jeu
 - Flèche directionnel vers le haut : Sauter
