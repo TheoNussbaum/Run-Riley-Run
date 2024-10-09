@@ -103,6 +103,8 @@ left_select_buttons = [pygame.image.load(r".\images\select_left_little.png"),
 right_select_buttons = [pygame.image.load(r".\images\select_right_little.png"),
                         pygame.image.load(r".\images\select_right_big.png")]
 
+characters_locked = [pygame.image.load(r".\images\lock.png")]
+
 character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
                       pygame.image.load(r".\characters\Choice_1.1.png")]
 
@@ -559,8 +561,15 @@ def Choice_Characters_Menu():
         left_choice_state = left_choice.draw(screen)
         right_choice_state = right_choice.draw(screen)
 
-        character_2.draw(screen)
-        character_3.draw(screen)
+        if search_score_to_unlock(2) >= search_best_score():
+            screen.blit(pygame.image.load(r".\images\lock.png"), (430, 435))
+        else:
+            character_2.draw(screen)
+
+        if search_score_to_unlock(3) >= search_best_score():
+            screen.blit(pygame.image.load(r".\images\lock.png"), (1395, 475))
+        else:
+            character_3.draw(screen)
 
         if temp > 6:
             character_1_state = character_1.draw(screen)
