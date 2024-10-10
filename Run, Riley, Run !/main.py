@@ -5,6 +5,8 @@ Projet : Run, Riley, Run!
 Description : Fichier du système du jeu.
 """
 import pygame.image
+from pygame.examples.aliens import Player
+from database import *
 
 from imports import *
 
@@ -101,6 +103,8 @@ left_select_buttons = [pygame.image.load(r".\images\select_left_little.png"),
 right_select_buttons = [pygame.image.load(r".\images\select_right_little.png"),
                         pygame.image.load(r".\images\select_right_big.png")]
 
+characters_locked = [pygame.image.load(r".\images\lock.png")]
+
 character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
                       pygame.image.load(r".\characters\Choice_1.1.png")]
 
@@ -118,6 +122,8 @@ resume_button_pressed = pygame.image.load(r".\images\Resume_pressed.png")
 
 quit_button_unpressed = pygame.image.load(r".\images\Quit_Unpressed.png")
 quit_button_pressed = pygame.image.load(r".\images\Quit_Pressed.png")
+
+play_again_button_unpressed = pygame.image.load(r".\images\Play_Again_Unpressed.png")
 
 start_button = Button(662, 489, start_button_unpressed_image)
 rules_button = Button(782, 803, rules_button_unpressed_image)
@@ -335,7 +341,7 @@ def resume_game():
 #######################################################################################################################
 
 def Game():
-    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on
+    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on, obstacle
     timer = pygame.time.Clock()
 
     # Joueur
@@ -355,7 +361,7 @@ def Game():
     font = pygame.font.Font(r".\police\Myfont-Regular.ttf", 50)
 
     def Score():
-        global game_score, game_speed, game_speed_backup
+        global game_score, game_speed, game_speed_backup, start_menu
         text_x = 1850
         text_score_x = 1685
         text_color = (255, 248, 189)
@@ -394,6 +400,8 @@ def Game():
             screen.blit(text_score, text_score_rect)
             screen.blit(text, text_rect)
 
+            return game_score
+
     # Boucler tant que le jeu n'est pas fini
     while game_on:
         x_quit_coords = 787
@@ -425,12 +433,12 @@ def Game():
         player.draw(screen)
         player.update(user_input)
 
-        Score()
-
         # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset on le mettant à nouveau au début (-1521)
         if player.player_alive:
             if user_input[pygame.K_ESCAPE]:
                 game_pause = True
+
+            game_current_score = Score()
 
             if not game_pause:
                 # Vitesse à laquelle le arrière plan vas défiler
@@ -465,6 +473,7 @@ def Game():
         for obstacle in obstacles:
             obstacle.draw(screen)
             obstacle.update()
+
             if player.player_rect.colliderect(obstacle.rect):
                 pygame.draw.rect(screen, (255, 0, 0), player.player_rect, 2)
                 player.player_alive = False
@@ -492,9 +501,21 @@ def Game():
         else:
             resume_button_img = resume_button_unpressed
 
+        print(game_current_score)
 
         if not player.player_alive:
             screen.blit(game_over, (0, 0))
+            play_again_button = Button(0, 0, play_again_button_unpressed)
+            play_again_button.draw(screen)
+
+            tuple_best_score = search_best_score()
+            int_best_score = int(tuple_best_score[0])
+
+            if game_current_score > int_best_score:
+                edit_score(int(game_current_score))
+
+            if play_again_button.clicked:
+                player.player_alive = True
 
         # FPS
         timer.tick(fps)
@@ -540,8 +561,32 @@ def Choice_Characters_Menu():
         left_choice_state = left_choice.draw(screen)
         right_choice_state = right_choice.draw(screen)
 
-        character_2.draw(screen)
-        character_3.draw(screen)
+        # Vérifie si le score nécessaire pour débloquer les personnages est atteint, puis met à jour la clé étrangère du personnage
+        if search_score_to_unlock(1) <= search_best_score():
+            edit_idCharacter(1)
+
+        if search_score_to_unlock(2) <= search_best_score():
+            edit_idCharacter(2)
+
+        if search_score_to_unlock(3) <= search_best_score():
+            edit_idCharacter(3)
+
+        # Récupère et affiche l'ID du personnage sélectionné
+        tuple_idCharacter = search_idCharacter()
+        int_idCharacter = int(tuple_idCharacter[0])
+        print(int_idCharacter)
+
+        # Affiche un cadenas ou le personnage 2 en fonction de l'ID
+        if int_idCharacter < 2:
+            screen.blit(pygame.image.load(r".\images\lock.png"), (430, 435))
+        else:
+            character_2.draw(screen)
+
+        # Affiche un cadenas ou le personnage 3 en fonction de l'ID
+        if int_idCharacter < 3:
+            screen.blit(pygame.image.load(r".\images\lock.png"), (1395, 475))
+        else:
+            character_3.draw(screen)
 
         if temp > 6:
             character_1_state = character_1.draw(screen)
@@ -625,12 +670,12 @@ while start_menu:
 
         # On change l'image du bouton
         if start_button.clicked:
-            start_button = Button(662, 489, start_button_pressed_image)
+            start_button = Button(602, 489, start_button_pressed_image)
             t_start_menu = Timer(0.15, quit_start_menu)
             t_start_menu.start()
     else:
         screen.blit(bg_rules, (0, 0))
-        temp_player.player_rect.x = 800
+        temp_player.player_rect.x = 830
 
         temp_player.draw(screen)
         temp_player.update(pressed)
