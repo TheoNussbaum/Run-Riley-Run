@@ -561,12 +561,29 @@ def Choice_Characters_Menu():
         left_choice_state = left_choice.draw(screen)
         right_choice_state = right_choice.draw(screen)
 
-        if search_score_to_unlock(2) >= search_best_score():
+        # Vérifie si le score nécessaire pour débloquer les personnages est atteint, puis met à jour la clé étrangère du personnage
+        if search_score_to_unlock(1) <= search_best_score():
+            edit_idCharacter(1)
+
+        if search_score_to_unlock(2) <= search_best_score():
+            edit_idCharacter(2)
+
+        if search_score_to_unlock(3) <= search_best_score():
+            edit_idCharacter(3)
+
+        # Récupère et affiche l'ID du personnage sélectionné
+        tuple_idCharacter = search_idCharacter()
+        int_idCharacter = int(tuple_idCharacter[0])
+        print(int_idCharacter)
+
+        # Affiche un cadenas ou le personnage 2 en fonction de l'ID
+        if int_idCharacter < 2:
             screen.blit(pygame.image.load(r".\images\lock.png"), (430, 435))
         else:
             character_2.draw(screen)
 
-        if search_score_to_unlock(3) >= search_best_score():
+        # Affiche un cadenas ou le personnage 3 en fonction de l'ID
+        if int_idCharacter < 3:
             screen.blit(pygame.image.load(r".\images\lock.png"), (1395, 475))
         else:
             character_3.draw(screen)
