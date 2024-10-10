@@ -97,21 +97,17 @@ characters_bg_image = pygame.image.load(r".\images\bg_character_menu.png")
 
 bg_rules = pygame.image.load(r".\images\bg_rules.png")
 
-left_select_buttons = [pygame.image.load(r".\images\select_left_little.png"),
-                       pygame.image.load(r".\images\select_left_big.png")]
-
-right_select_buttons = [pygame.image.load(r".\images\select_right_little.png"),
-                        pygame.image.load(r".\images\select_right_big.png")]
-
-characters_locked = [pygame.image.load(r".\images\lock.png")]
-
 character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
                       pygame.image.load(r".\characters\Choice_1.1.png")]
 
-character_choice_2 = [pygame.image.load(r".\characters\Choice_2.0.png")]
+character_choice_2 = [pygame.image.load(r".\characters\Choice_2.0.png"),
+                      pygame.image.load(r".\characters\huey_lock.png"),
+                      pygame.image.load(r".\characters\Huey_UnLock.png")]
 
 
-character_choice_3 = [pygame.image.load(r".\characters\Choice_3.0.png")]
+character_choice_3 = [pygame.image.load(r".\characters\Choice_3.0.png"),
+                      pygame.image.load(r".\characters\Saitama_Lock.png"),
+                      pygame.image.load(r".\characters\Saitama_Unlock.png")]
 
 game_over = pygame.image.load(r".\images\Game_Over_2.png")
 
@@ -536,11 +532,9 @@ def Choice_Characters_Menu():
     timer = pygame.time.Clock()
     temp = 0
 
-    left_choice = Button(575, 435, left_select_buttons[0])
-    right_choice = Button(1175, 439, right_select_buttons[0])
     character_1 = Button(564, 158, character_choice_1[0])
-    character_2 = Button(430, 435, character_choice_2[0])
-    character_3 = Button(1395, 475, character_choice_3[0])
+    character_2 = Button(0, 0, character_choice_2[2])
+    character_3 = Button(0, 0, character_choice_3[2])
 
     # Boucler tant que le jeu n'est pas fini
     while characters_menu:
@@ -557,9 +551,6 @@ def Choice_Characters_Menu():
 
         # Affichage de l'arrière plan
         screen.blit(characters_bg_image, (0, 0))
-
-        left_choice_state = left_choice.draw(screen)
-        right_choice_state = right_choice.draw(screen)
 
         # Vérifie si le score nécessaire pour débloquer les personnages est atteint, puis met à jour la clé étrangère du personnage
         if search_score_to_unlock(1) <= search_best_score():
@@ -578,13 +569,13 @@ def Choice_Characters_Menu():
 
         # Affiche un cadenas ou le personnage 2 en fonction de l'ID
         if int_idCharacter < 2:
-            screen.blit(pygame.image.load(r".\images\lock.png"), (430, 435))
+            screen.blit(character_choice_2[1], (0, 0))
         else:
             character_2.draw(screen)
 
         # Affiche un cadenas ou le personnage 3 en fonction de l'ID
         if int_idCharacter < 3:
-            screen.blit(pygame.image.load(r".\images\lock.png"), (1395, 475))
+            screen.blit(character_choice_3[1], (0, 0))
         else:
             character_3.draw(screen)
 
@@ -594,16 +585,6 @@ def Choice_Characters_Menu():
                 character_1 = Button(564, 158, character_choice_1[1])
             else:
                 character_1 = Button(564, 158, character_choice_1[0])
-
-            if left_choice_state[1]:
-                left_choice = Button(575, 435, left_select_buttons[1])
-            else:
-                left_choice = Button(575, 435, left_select_buttons[0])
-
-            if right_choice_state[1]:
-                right_choice = Button(1175, 439, right_select_buttons[1])
-            else:
-                right_choice = Button(1175, 439, right_select_buttons[0])
 
             if character_1_state[0]:
                 characters_menu = False
