@@ -31,7 +31,7 @@
 - **Client SQL**, par example HediSQL
 - **Connection a la DB** pour interagire avec la base de données executer cette requete dans votre client SQL (changer le "utilisateur" et le "mot de passe" par vos valeurs)
   ```SQL
-  ALTER USER 'utilisateur'@'localhost' IDENTIFIED WITH mysql_native_password BY 'mot_de_passe';
+  ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Cactus-8';
   FLUSH PRIVILEGES;
   ```
   Cette requete change l'algorithme de cryptage de votre mot de passe, car mysql-connector ne support pas celui de base.
