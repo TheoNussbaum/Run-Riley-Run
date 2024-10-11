@@ -102,13 +102,11 @@ character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
 
 character_choice_2 = [pygame.image.load(r".\characters\Choice_2.0.png"),
                       pygame.image.load(r".\characters\huey_lock.png"),
-                      pygame.image.load(r".\characters\Huey_UnLock.png"),
                       pygame.image.load(r".\characters\Choice_2.1.png")]
 
 
 character_choice_3 = [pygame.image.load(r".\characters\Choice_3.0.png"),
                       pygame.image.load(r".\characters\Saitama_Lock.png"),
-                      pygame.image.load(r".\characters\Saitama_Unlock.png"),
                       pygame.image.load(r".\characters\Choice_3.1.png")]
 
 
@@ -367,12 +365,13 @@ def Game():
 
         if player.player_alive:
             if not game_pause:
-                game_score += 1
+                game_score += 100
                 game_speed_backup = game_speed
 
             if game_score % 1000 == 0:
-                game_speed += 1
-                game_score += 100
+                if game_speed <= 30:
+                    game_speed += 0.3
+                    game_score += 100
 
             if game_score > 99:
                 text_score_x = 1675
@@ -588,7 +587,7 @@ def Choice_Characters_Menu():
                 character_2_state = character_2.draw(screen)
 
                 if character_2_state[1]:
-                    character_2 = Button(0, 0, character_choice_2[3])
+                    character_2 = Button(0, 0, character_choice_2[2])
                 else:
                     character_2 = Button(0, 0, character_choice_2[0])
 
@@ -611,7 +610,7 @@ def Choice_Characters_Menu():
                 character_3_state = character_3.draw(screen)
 
                 if character_3_state[1]:
-                    character_3 = Button(1200, 0, character_choice_3[3])
+                    character_3 = Button(1200, 0, character_choice_3[2])
                 else:
                     character_3 = Button(1200, 0, character_choice_3[0])
 
