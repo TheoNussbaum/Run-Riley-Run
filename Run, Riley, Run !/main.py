@@ -102,12 +102,15 @@ character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
 
 character_choice_2 = [pygame.image.load(r".\characters\Choice_2.0.png"),
                       pygame.image.load(r".\characters\huey_lock.png"),
-                      pygame.image.load(r".\characters\Huey_UnLock.png")]
+                      pygame.image.load(r".\characters\Huey_UnLock.png"),
+                      pygame.image.load(r".\characters\Choice_2.1.png")]
 
 
 character_choice_3 = [pygame.image.load(r".\characters\Choice_3.0.png"),
                       pygame.image.load(r".\characters\Saitama_Lock.png"),
-                      pygame.image.load(r".\characters\Saitama_Unlock.png")]
+                      pygame.image.load(r".\characters\Saitama_Unlock.png"),
+                      pygame.image.load(r".\characters\Choice_3.1.png")]
+
 
 game_over = pygame.image.load(r".\images\Game_Over_2.png")
 
@@ -497,8 +500,6 @@ def Game():
         else:
             resume_button_img = resume_button_unpressed
 
-        print(game_current_score)
-
         if not player.player_alive:
             screen.blit(game_over, (0, 0))
             play_again_button = Button(0, 0, play_again_button_unpressed)
@@ -528,6 +529,8 @@ def Game():
 #######################################################################################################################
 
 def Choice_Characters_Menu():
+    global running
+
     characters_menu = True
     timer = pygame.time.Clock()
     temp = 0
@@ -567,18 +570,6 @@ def Choice_Characters_Menu():
         int_idCharacter = int(tuple_idCharacter[0])
         print(int_idCharacter)
 
-        # Affiche un cadenas ou le personnage 2 en fonction de l'ID
-        if int_idCharacter < 2:
-            screen.blit(character_choice_2[1], (0, 0))
-        else:
-            character_2.draw(screen)
-
-        # Affiche un cadenas ou le personnage 3 en fonction de l'ID
-        if int_idCharacter < 3:
-            screen.blit(character_choice_3[1], (0, 0))
-        else:
-            character_3.draw(screen)
-
         if temp > 6:
             character_1_state = character_1.draw(screen)
             if character_1_state[1]:
@@ -589,6 +580,51 @@ def Choice_Characters_Menu():
             if character_1_state[0]:
                 characters_menu = False
                 Game()
+
+            # Affiche un cadenas ou le personnage 2 en fonction de l'ID
+            if int_idCharacter < 2:
+                screen.blit(character_choice_2[1], (0, 0))
+            else:
+                character_2_state = character_2.draw(screen)
+
+                if character_2_state[1]:
+                    character_2 = Button(0, 0, character_choice_2[3])
+                else:
+                    character_2 = Button(0, 0, character_choice_2[0])
+
+                if character_2_state[0]:
+
+                    running = [pygame.image.load(r".\running\Huey_step_1.png"),
+                               pygame.image.load(r".\running\Huey_step_2.png"),
+                               pygame.image.load(r".\running\Huey_step_3.png"),
+                               pygame.image.load(r".\running\Huey_step_4.png"),
+                               pygame.image.load(r".\running\Huey_step_5.png"),
+                               pygame.image.load(r".\running\Huey_step_6.png")]
+
+                    characters_menu = False
+                    Game()
+
+            # Affiche un cadenas ou le personnage 3 en fonction de l'ID
+            if int_idCharacter < 3:
+                screen.blit(character_choice_3[1], (0, 0))
+            else:
+                character_3_state = character_3.draw(screen)
+
+                if character_3_state[1]:
+                    character_3 = Button(1200, 0, character_choice_3[3])
+                else:
+                    character_3 = Button(1200, 0, character_choice_3[0])
+
+                if character_3_state[0]:
+                    running = [pygame.image.load(r".\running\saitama_step_1.png"),
+                               pygame.image.load(r".\running\saitama_step_2.png"),
+                               pygame.image.load(r".\running\saitama_step_3.png"),
+                               pygame.image.load(r".\running\saitama_step_4.png"),
+                               pygame.image.load(r".\running\saitama_step_5.png"),
+                               pygame.image.load(r".\running\saitama_step_6.png")]
+
+                    characters_menu = False
+                    Game()
 
         if temp <= 6:
             temp += 1
