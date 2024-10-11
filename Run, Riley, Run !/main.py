@@ -365,13 +365,13 @@ def Game():
 
         if player.player_alive:
             if not game_pause:
-                game_score += 100
+                game_score += 1
                 game_speed_backup = game_speed
 
             if game_score % 1000 == 0:
                 if game_speed <= 30:
                     game_speed += 0.3
-                    game_score += 100
+                    game_score += 20
 
             if game_score > 99:
                 text_score_x = 1675
