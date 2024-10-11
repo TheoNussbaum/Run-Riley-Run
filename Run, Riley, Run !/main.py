@@ -169,7 +169,7 @@ class Player:
         # Positionnement du joueur et l'image affiché
         self.step_index = 0
         self.image = self.run_img[0]
-        self.player_rect = self.image.get_rect()
+        self.player_rect = pygame.Rect(100,795,150,195)
         self.player_rect.x = self.x_pos
         self.player_rect.y = self.y_pos
 
@@ -191,6 +191,9 @@ class Player:
 
             if self.player_jump:
                 self.jump()
+
+            # Mettre à jour le masque dynamiquement lorsque l'image change
+            self.update_mask()
 
         # Si l'animation est fini recommencer
         if self.step_index >= self.index_speed:
@@ -214,11 +217,35 @@ class Player:
             self.player_run = True
             self.player_jump = False
 
+    # Fonction pour mettre à jour le masque à chaque changement d'image
+    def update_mask(self):
+        # Create the mask from the current player's surface
+        self.player_mask = pygame.mask.from_surface(self.image)
+
+        # Create a new surface to visualize the mask
+        self.mask_surface = pygame.Surface(self.image.get_size())
+
+        # Fill the mask surface with a transparent background
+        self.mask_surface.fill((0, 0, 0))
+        self.mask_surface.set_colorkey((0, 0, 0))  # Make the black color transparent
+
+        # Set color for the mask visualization (e.g., white)
+        mask_color = (255, 255, 255)
+
+        # Get mask dimensions
+        mask_width, mask_height = self.player_mask.get_size()
+
+        # Draw the mask onto the mask_surface
+        for x in range(mask_width):
+            for y in range(mask_height):
+                if self.player_mask.get_at((x, y)):  # If mask is active at this point
+                    self.mask_surface.set_at((x, y), mask_color)
+
     # Fonction pour se baisser
     def bending_down(self):
         if not game_pause:
             self.image = self.bending_down_img[self.step_index // 8]
-            self.player_rect = self.image.get_rect()
+            self.player_rect = pygame.Rect(100,795,150,195)
             self.player_rect.x = self.x_pos
             self.player_rect.y = self.y_pos + 30
             self.step_index += 1
@@ -230,7 +257,7 @@ class Player:
             self.player_rect.x = 100
             self.player_rect.y = 795
             self.image = self.run_img[self.step_index // 8]
-            self.player_rect = self.image.get_rect()
+            self.player_rect = pygame.Rect(100,795,150,195)
             self.player_rect.x = self.x_pos
             self.player_rect.y = self.y_pos
             self.step_index += 1
@@ -249,7 +276,10 @@ class Player:
 
     # Fonction pour afficher le personnage
     def draw(self, screen_parameter):
+        # Affiche le masque derrière le joueur pour gèrer les colisions
+        screen_parameter.blit(self.mask_surface, (self.player_rect.x, self.player_rect.y))
         screen_parameter.blit(self.image, (self.player_rect.x, self.player_rect.y))
+
 
 
 #######################################################################################################################
@@ -257,7 +287,7 @@ class Player:
 #######################################################################################################################
 
 class Obstacle:
-    global player_alive
+    global player_alive, game_speed
 
     # Déclarations des variables d'initialisation de l'obstacle
     def __init__(self, image, type):
@@ -365,7 +395,7 @@ def Game():
 
         if player.player_alive:
             if not game_pause:
-                game_score += 1
+                game_score += 10
                 game_speed_backup = game_speed
 
             if game_score % 1000 == 0:
@@ -426,6 +456,8 @@ def Game():
         screen.blit(front, (front_bg_x, 0))
         resume_button = Button(x_resume_coords, y_resume_coords, resume_button_img)
         quit_button = Button(x_quit_coords, y_quit_coords, quit_button_img)
+
+
 
         # Affichage de l'écran et mise à jour des inputs pour vérifier si on doit modifier l'état du personnage.
         player.draw(screen)
