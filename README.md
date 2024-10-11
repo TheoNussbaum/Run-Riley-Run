@@ -43,7 +43,12 @@
 
 ## Commandes du jeu
 - Flèche directionnel vers le haut : Sauter
-- Flèche directionnel vers le bas : Esquiver
+
+![Design sans titre (1)](https://github.com/user-attachments/assets/7978f2ec-7b63-485a-ad1e-f6012e73179e)
+- Maintenir la flèche directionnel vers le bas : Esquiver
+
+![Design sans titre (2)](https://github.com/user-attachments/assets/dc9abd33-c06d-41c2-acf0-f948c57655f6)
+
 
 ## Auteurs
 - Nussbaum Théo (@TheoNussbaum)
