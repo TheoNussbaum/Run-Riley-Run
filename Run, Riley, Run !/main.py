@@ -130,6 +130,7 @@ quit_button_img = quit_button_unpressed
 
 # Variables
 game_speed = 10
+initial_game_speed = 10
 game_score = 0
 game_speed_backup = 0
 start_menu = True
@@ -161,17 +162,17 @@ class Player:
         self.temp = 0
 
         # Dans quel état est le joueur
-        self.player_bending_down = False
-        self.player_run = True
-        self.player_jump = False
-        self.player_alive = True
+        self.bending_down = False
+        self.run = True
+        self.jump = False
+        self.alive = True
 
         # Positionnement du joueur et l'image affiché
         self.step_index = 0
         self.image = self.run_img[0]
-        self.player_rect = pygame.Rect(100,795,150,195)
-        self.player_rect.x = self.x_pos
-        self.player_rect.y = self.y_pos
+        self.rect = pygame.Rect(100,795,150,195)
+        self.rect.x = self.x_pos
+        self.rect.y = self.y_pos
 
         # Variables pour les parametres du saut
         self.gravity = 0.8
@@ -180,105 +181,80 @@ class Player:
         self.run_index = 48
         self.index_speed = self.run_index
 
+        self.mask_surface = pygame.Surface(self.image.get_size())
+
     # Cette fonction servira à mettre à jour l'état et l'image du personnage en fonction de ce qu'il fait dans le jeu.
     def update(self, user_input):
-        if self.player_alive:
-            if self.player_bending_down:
-                self.bending_down()
+        if self.alive:
+            if self.bending_down:
+                self.bending_down_mouvement()
 
-            if self.player_run:
-                self.run()
+            if self.run:
+                self.run_mouvement()
 
-            if self.player_jump:
-                self.jump()
-
-            # Mettre à jour le masque dynamiquement lorsque l'image change
-            self.update_mask()
+            if self.jump:
+                self.jump_mouvement()
 
         # Si l'animation est fini recommencer
         if self.step_index >= self.index_speed:
             self.step_index = 0
 
         # Si le joueur appuye pour sauter et que le joueur n'est pas dans les aires (n'a pas sauté), on vas donc dire que le joueur peut sauter
-        if user_input[pygame.K_UP] and not self.player_jump:
-                self.player_bending_down = False
-                self.player_run = False
-                self.player_jump = True
+        if user_input[pygame.K_UP] and not self.jump:
+                self.bending_down = False
+                self.run = False
+                self.jump = True
 
         # Si le joueur appuye pour se baisser et que le joueur n'est pas dans les aires (n'a pas sauté), on vas donc dire que le joueur peut se baisser
-        elif user_input[pygame.K_DOWN] and not self.player_jump:
-            self.player_bending_down = True
-            self.player_run = False
-            self.player_jump = False
+        elif user_input[pygame.K_DOWN] and not self.jump:
+            self.bending_down = True
+            self.run = False
+            self.jump = False
 
         # Si le joueur n'est pas entrain dans les aires (n'a pas sauté) ou qu'il ne c'est pas baissé, on vas donc dire que le joueur peut courrir
-        elif not (self.player_jump or user_input[pygame.K_DOWN]):
-            self.player_bending_down = False
-            self.player_run = True
-            self.player_jump = False
-
-    # Fonction pour mettre à jour le masque à chaque changement d'image
-    def update_mask(self):
-        # Create the mask from the current player's surface
-        self.player_mask = pygame.mask.from_surface(self.image)
-
-        # Create a new surface to visualize the mask
-        self.mask_surface = pygame.Surface(self.image.get_size())
-
-        # Fill the mask surface with a transparent background
-        self.mask_surface.fill((0, 0, 0))
-        self.mask_surface.set_colorkey((0, 0, 0))  # Make the black color transparent
-
-        # Set color for the mask visualization (e.g., white)
-        mask_color = (255, 255, 255)
-
-        # Get mask dimensions
-        mask_width, mask_height = self.player_mask.get_size()
-
-        # Draw the mask onto the mask_surface
-        for x in range(mask_width):
-            for y in range(mask_height):
-                if self.player_mask.get_at((x, y)):  # If mask is active at this point
-                    self.mask_surface.set_at((x, y), mask_color)
+        elif not (self.jump or user_input[pygame.K_DOWN]):
+            self.bending_down = False
+            self.run = True
+            self.jump = False
 
     # Fonction pour se baisser
-    def bending_down(self):
+    def bending_down_mouvement(self):
         if not game_pause:
             self.image = self.bending_down_img[self.step_index // 8]
-            self.player_rect = pygame.Rect(100,795,150,195)
-            self.player_rect.x = self.x_pos
-            self.player_rect.y = self.y_pos + 30
+            self.rect = pygame.Rect(100,795,150,195)
+            self.rect.x = self.x_pos
+            self.rect.y = self.y_pos + 30
             self.step_index += 1
             self.temp += 1
 
     # Fonction pour courrir
-    def run(self):
+    def run_mouvement(self):
         if not game_pause:
-            self.player_rect.x = 100
-            self.player_rect.y = 795
+            self.rect.x = 100
+            self.rect.y = 795
             self.image = self.run_img[self.step_index // 8]
-            self.player_rect = pygame.Rect(100,795,150,195)
-            self.player_rect.x = self.x_pos
-            self.player_rect.y = self.y_pos
+            self.rect = pygame.Rect(100,795,150,195)
+            self.rect.x = self.x_pos
+            self.rect.y = self.y_pos
             self.step_index += 1
 
     # Fonction pour sauter
-    def jump(self):
+    def jump_mouvement(self):
         if not game_pause:
             self.image = self.jump_img[self.step_index // 8]
-            self.player_rect.y -= self.velocity
+            self.rect.y -= self.velocity
             self.velocity -= self.gravity
             self.step_index += 1
 
             if self.velocity < - self.jump_height:
-                self.player_jump = False
+                self.jump = False
                 self.velocity = self.jump_height
 
     # Fonction pour afficher le personnage
     def draw(self, screen_parameter):
         # Affiche le masque derrière le joueur pour gèrer les colisions
-        screen_parameter.blit(self.mask_surface, (self.player_rect.x, self.player_rect.y))
-        screen_parameter.blit(self.image, (self.player_rect.x, self.player_rect.y))
+        #screen_parameter.blit(self.mask_surface, (self.rect.x, self.rect.y))
+        screen_parameter.blit(self.image, (self.rect.x, self.rect.y))
 
 
 
@@ -287,10 +263,11 @@ class Player:
 #######################################################################################################################
 
 class Obstacle:
-    global player_alive, game_speed
+    global alive, game_speed
 
     # Déclarations des variables d'initialisation de l'obstacle
     def __init__(self, image, type):
+        pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.type = type
         self.rect = self.image[self.type].get_rect()
@@ -306,7 +283,7 @@ class Obstacle:
 
     # Affiche l'obstacle sur l'écran
     def draw(self, window):
-        screen.blit(self.image[self.type], self.rect)
+        window.blit(self.image[self.type], self.rect)
 
 
 #######################################################################################################################
@@ -340,13 +317,13 @@ class Bird(Obstacle):
         self.rect.y = 735
         self.index = 0
         self.index_speed = 24
-        self.player_alive = True
+        self.alive = True
 
     def draw(self, window):
         if self.index >= self.index_speed:
             self.index = 0
         screen.blit(self.image[self.index // 6], self.rect)
-        if self.player_alive:
+        if self.alive:
             if not game_pause:
                 self.index += 1
                 self.rect.x -= 4
@@ -393,7 +370,7 @@ def Game():
         text_score_x = 1685
         text_color = (255, 248, 189)
 
-        if player.player_alive:
+        if player.alive:
             if not game_pause:
                 game_score += 10
                 game_speed_backup = game_speed
@@ -430,6 +407,15 @@ def Game():
 
             return game_score
 
+    # Function to reset the game state
+    def reset_game():
+        global game_score, game_speed, obstacles
+        game_score = 0
+        player.alive = True
+        game_speed = initial_game_speed  # Assuming you have an initial game speed variable
+        obstacles.clear()  # Clear all current obstacles
+
+
     # Boucler tant que le jeu n'est pas fini
     while game_on:
         x_quit_coords = 787
@@ -464,7 +450,7 @@ def Game():
         player.update(user_input)
 
         # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset on le mettant à nouveau au début (-1521)
-        if player.player_alive:
+        if player.alive:
             if user_input[pygame.K_ESCAPE]:
                 game_pause = True
 
@@ -504,10 +490,10 @@ def Game():
             obstacle.draw(screen)
             obstacle.update()
 
-            if player.player_rect.colliderect(obstacle.rect):
-                pygame.draw.rect(screen, (255, 0, 0), player.player_rect, 2)
-                player.player_alive = False
-                obstacle.player_alive = False
+            if player.rect.colliderect(obstacle.rect):
+                pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
+                player.alive = False
+                obstacle.alive = False
                 game_speed = 0
 
         if game_pause:
@@ -531,7 +517,7 @@ def Game():
         else:
             resume_button_img = resume_button_unpressed
 
-        if not player.player_alive:
+        if not player.alive:
             screen.blit(game_over, (0, 0))
             play_again_button = Button(0, 0, play_again_button_unpressed)
             play_again_button.draw(screen)
@@ -543,7 +529,7 @@ def Game():
                 edit_score(int(game_current_score))
 
             if play_again_button.clicked:
-                player.player_alive = True
+                reset_game()
 
         # FPS
         timer.tick(fps)
@@ -723,7 +709,7 @@ while start_menu:
             t_start_menu.start()
     else:
         screen.blit(bg_rules, (0, 0))
-        temp_player.player_rect.x = 830
+        temp_player.rect.x = 830
 
         temp_player.draw(screen)
         temp_player.update(pressed)
