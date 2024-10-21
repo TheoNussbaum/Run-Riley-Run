@@ -150,7 +150,7 @@ x_pause = 659
 class Player:
     # Position du joueur par défaut
     x_pos = 100  # jumping = 83  / running = 40
-    y_pos = 795 # jumping = 620 / running = 795
+    y_pos = 795  # jumping = 620 / running = 795
 
     # Déclarations des variables d'initialisation du joueur
     def __init__(self):
@@ -170,7 +170,7 @@ class Player:
         # Positionnement du joueur et l'image affiché
         self.step_index = 0
         self.image = self.run_img[0]
-        self.rect = pygame.Rect(100,795,150,195)
+        self.rect = pygame.Rect(100, 795, 150, 195)
         self.rect.x = self.x_pos
         self.rect.y = self.y_pos
 
@@ -187,13 +187,13 @@ class Player:
     def update(self, user_input):
         if self.alive:
             if self.bending_down:
-                self.bending_down_mouvement()
+                self.bending_down_movement()
 
             if self.run:
-                self.run_mouvement()
+                self.run_movement()
 
             if self.jump:
-                self.jump_mouvement()
+                self.jump_movement()
 
         # Si l'animation est fini recommencer
         if self.step_index >= self.index_speed:
@@ -218,28 +218,26 @@ class Player:
             self.jump = False
 
     # Fonction pour se baisser
-    def bending_down_mouvement(self):
+    def bending_down_movement(self):
         if not game_pause:
             self.image = self.bending_down_img[self.step_index // 8]
-            self.rect = pygame.Rect(100,795,150,195)
             self.rect.x = self.x_pos
             self.rect.y = self.y_pos + 30
             self.step_index += 1
             self.temp += 1
 
     # Fonction pour courrir
-    def run_mouvement(self):
+    def run_movement(self):
         if not game_pause:
             self.rect.x = 100
             self.rect.y = 795
             self.image = self.run_img[self.step_index // 8]
-            self.rect = pygame.Rect(100,795,150,195)
             self.rect.x = self.x_pos
             self.rect.y = self.y_pos
             self.step_index += 1
 
     # Fonction pour sauter
-    def jump_mouvement(self):
+    def jump_movement(self):
         if not game_pause:
             self.image = self.jump_img[self.step_index // 8]
             self.rect.y -= self.velocity
@@ -257,13 +255,12 @@ class Player:
         screen_parameter.blit(self.image, (self.rect.x, self.rect.y))
 
 
-
 #######################################################################################################################
 ################################### Classe qui permet de créer des obstacles ##########################################
 #######################################################################################################################
 
 class Obstacle:
-    global alive, game_speed
+    global game_speed
 
     # Déclarations des variables d'initialisation de l'obstacle
     def __init__(self, image, type):
@@ -345,7 +342,7 @@ def resume_game():
 #######################################################################################################################
 
 def Game():
-    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on, obstacle
+    global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on, obstacle, game_current_score
     timer = pygame.time.Clock()
 
     # Joueur
@@ -401,7 +398,7 @@ def Game():
             text_score_rect.center = (text_score_x, 40)
 
             text_rect = text.get_rect()
-            text_rect.center = (text_x, 40) # 100000 = 1670 / 10000 = 1685 / 1000 = 1700 / 100 = 1725
+            text_rect.center = (text_x, 40)  # 100000 = 1670 / 10000 = 1685 / 1000 = 1700 / 100 = 1725
             screen.blit(text_score, text_score_rect)
             screen.blit(text, text_rect)
 
@@ -449,12 +446,14 @@ def Game():
         player.draw(screen)
         player.update(user_input)
 
-        # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset on le mettant à nouveau au début (-1521)
+        # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset en le mettant à nouveau au début (-1521)
         if player.alive:
             if user_input[pygame.K_ESCAPE]:
                 game_pause = True
 
             game_current_score = Score()
+
+            pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
 
             if not game_pause:
                 # Vitesse à laquelle le arrière plan vas défiler
@@ -485,13 +484,13 @@ def Game():
                     obstacles.append(Tire(pneu_obstacle))
 
 
-        # Affiche les obstacles sur l'écran et si le joueur est au même endroit que l'obstacle afficher la heatbox en rouge
+        # Affiche les obstacles sur l'écran et si le joueur est au même endroit que l'obstacle afficher la hitbox en rouge
         for obstacle in obstacles:
             obstacle.draw(screen)
             obstacle.update()
 
             if player.rect.colliderect(obstacle.rect):
-                pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
+                #pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
                 player.alive = False
                 obstacle.alive = False
                 game_speed = 0
@@ -574,18 +573,18 @@ def Choice_Characters_Menu():
 
         # Vérifie si le score nécessaire pour débloquer les personnages est atteint, puis met à jour la clé étrangère du personnage
         if search_score_to_unlock(1) <= search_best_score():
-            edit_idCharacter(1)
+            edit_id_character(1)
 
         if search_score_to_unlock(2) <= search_best_score():
-            edit_idCharacter(2)
+            edit_id_character(2)
 
         if search_score_to_unlock(3) <= search_best_score():
-            edit_idCharacter(3)
+            edit_id_character(3)
 
         # Récupère et affiche l'ID du personnage sélectionné
-        tuple_idCharacter = search_idCharacter()
-        int_idCharacter = int(tuple_idCharacter[0])
-        print(int_idCharacter)
+        tuple_id_character = search_id_character()
+        int_id_character = int(tuple_id_character[0])
+        print(int_id_character)
 
         if temp > 6:
             character_1_state = character_1.draw(screen)
@@ -599,7 +598,7 @@ def Choice_Characters_Menu():
                 Game()
 
             # Affiche un cadenas ou le personnage 2 en fonction de l'ID
-            if int_idCharacter < 2:
+            if int_id_character < 2:
                 screen.blit(character_choice_2[1], (0, 0))
             else:
                 character_2_state = character_2.draw(screen)
@@ -622,7 +621,7 @@ def Choice_Characters_Menu():
                     Game()
 
             # Affiche un cadenas ou le personnage 3 en fonction de l'ID
-            if int_idCharacter < 3:
+            if int_id_character < 3:
                 screen.blit(character_choice_3[1], (0, 0))
             else:
                 character_3_state = character_3.draw(screen)

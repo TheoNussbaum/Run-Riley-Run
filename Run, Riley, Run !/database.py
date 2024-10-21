@@ -44,14 +44,14 @@ def search_score_to_unlock(idcharacter):
     return rows
 
 # Met à jour l'ID du personnage sélectionné
-def edit_idCharacter(idcharacter):
+def edit_id_character(idcharacter):
     query = "UPDATE player SET Character_idCharacter = %s WHERE idPlayer = 1"
     cursor = db_connection.cursor()
     cursor.execute(query, (idcharacter,))
     cursor.close()
 
 # Récupère l'ID du personnage sélectionné
-def search_idCharacter():
+def search_id_character():
     query = "SELECT Character_idCharacter FROM `player`"
     cursor = db_connection.cursor()
     cursor.execute(query)
