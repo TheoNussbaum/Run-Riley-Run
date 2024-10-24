@@ -220,17 +220,19 @@ class Player:
     # Fonction pour se baisser
     def bending_down_movement(self):
         if not game_pause:
+            self.rect = pygame.Rect(140, 925, 250, 50)
             self.image = self.bending_down_img[self.step_index // 8]
-            self.rect.x = self.x_pos
-            self.rect.y = self.y_pos + 30
+            self.x_pos = 100
+            self.y_pos = 795 + 30
             self.step_index += 1
             self.temp += 1
 
     # Fonction pour courrir
     def run_movement(self):
         if not game_pause:
-            self.rect.x = 100
-            self.rect.y = 795
+            self.rect = pygame.Rect(100, 795, 150, 195)
+            self.x_pos = 100
+            self.y_pos = 795
             self.image = self.run_img[self.step_index // 8]
             self.rect.x = self.x_pos
             self.rect.y = self.y_pos
@@ -240,7 +242,8 @@ class Player:
     def jump_movement(self):
         if not game_pause:
             self.image = self.jump_img[self.step_index // 8]
-            self.rect.y -= self.velocity
+            self.rect.y = self.y_pos
+            self.y_pos -= self.velocity
             self.velocity -= self.gravity
             self.step_index += 1
 
@@ -252,7 +255,7 @@ class Player:
     def draw(self, screen_parameter):
         # Affiche le masque derrière le joueur pour gèrer les colisions
         #screen_parameter.blit(self.mask_surface, (self.rect.x, self.rect.y))
-        screen_parameter.blit(self.image, (self.rect.x, self.rect.y))
+        screen_parameter.blit(self.image, (self.x_pos, self.y_pos))
 
 
 #######################################################################################################################
@@ -323,7 +326,7 @@ class Bird(Obstacle):
         if self.alive:
             if not game_pause:
                 self.index += 1
-                self.rect.x -= 4
+                self.rect.x -= (game_speed - 6)
 
 
 def quit_game():
@@ -440,8 +443,6 @@ def Game():
         resume_button = Button(x_resume_coords, y_resume_coords, resume_button_img)
         quit_button = Button(x_quit_coords, y_quit_coords, quit_button_img)
 
-
-
         # Affichage de l'écran et mise à jour des inputs pour vérifier si on doit modifier l'état du personnage.
         player.draw(screen)
         player.update(user_input)
@@ -452,8 +453,6 @@ def Game():
                 game_pause = True
 
             game_current_score = Score()
-
-            pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
 
             if not game_pause:
                 # Vitesse à laquelle le arrière plan vas défiler
@@ -478,8 +477,8 @@ def Game():
                 if random.randint(0, 2) == 0:
                     obstacles.append(Box(box_obstacles))
                 elif random.randint(0, 2) == 1:
-                    obstacles.append(Box(box_obstacles))
-                    #obstacles.append(Bird(bird_obstacles[temp]))
+                    #obstacles.append(Box(box_obstacles))
+                    obstacles.append(Bird(bird_obstacles[temp]))
                 elif random.randint(0, 2) == 2:
                     obstacles.append(Tire(pneu_obstacle))
 
@@ -506,8 +505,6 @@ def Game():
 
                 t_resume = Timer(0.15, resume_game)
                 t_resume.start()
-
-
 
             if quit_button.clicked:
                 quit_button_img = quit_button_pressed
