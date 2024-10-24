@@ -581,7 +581,6 @@ def Choice_Characters_Menu():
         # Récupère et affiche l'ID du personnage sélectionné
         tuple_id_character = search_id_character()
         int_id_character = int(tuple_id_character[0])
-        print(int_id_character)
 
         if temp > 6:
             character_1_state = character_1.draw(screen)
