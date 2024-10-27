@@ -7,6 +7,10 @@ Description : Fichier du système du jeu.
 Sources Youtubes :
 - PyGame Endless Vertical Platformer Beginner Tutorial in Python (Classe Joueur)
 - Youtubeur "Max Rohowsky (Max on Tech)"
+
+Sources Images :
+- Arrières plans et obstacles (https://craftpix.net)
+- Toute autre image à été crée par nous même
 """
 from imports import *
 
