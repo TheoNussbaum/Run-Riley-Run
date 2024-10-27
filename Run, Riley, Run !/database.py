@@ -1,3 +1,10 @@
+"""
+Auteur : Carlos Ferreira & Théo Nussbaum
+Date : 27.10.2024
+Projet : Run, Riley, Run!
+Description : Fichier côté base de données.
+"""
+
 import mysql.connector
 
 

@@ -1,31 +1,30 @@
 """
 Auteur : Carlos Ferreira & Théo Nussbaum
-Date : 04.10.2024
+Date : 27.10.2024
 Projet : Run, Riley, Run!
 Description : Fichier du système du jeu.
-"""
-import pygame.image
-from pygame.examples.aliens import Player
-from database import *
 
+Sources Youtubes :
+- PyGame Endless Vertical Platformer Beginner Tutorial in Python (Classe Joueur)
+- Youtubeur "Max Rohowsky (Max on Tech)"
+"""
 from imports import *
 
 pygame.init()
 
-# Variables Constantes
+# Constantes pour la configuration de l'écran
 screen_width = 1920
 screen_height = 1080
 fps = 60
-
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-# Images
-
+# Chargement des images de fond
 city = pygame.image.load(r".\background\CITY.png").convert_alpha()
 front = pygame.image.load(r".\background\FRONT.png").convert_alpha()
 middle = pygame.image.load(r".\background\MIDDLE.png").convert_alpha()
 sky = pygame.image.load(r".\background\SKY.png").convert_alpha()
 
+# Initialisation des animations pour le joueur
 running = [pygame.image.load(r".\running\step_1.png"),
            pygame.image.load(r".\running\step_2.png"),
            pygame.image.load(r".\running\step_3.png"),
@@ -49,6 +48,7 @@ jumping = [pygame.image.load(r".\jumping\step_1.png"),
            pygame.image.load(r".\jumping\step_5.png"),
            pygame.image.load(r".\jumping\step_6.png"),]
 
+# Initialisation des obstacles du jeu
 pneu_obstacle = [pygame.image.load(r".\obstacles\Pneu_Obstacle.png")]
 
 red_bird_obstacle = [pygame.image.load(r".\obstacles\1_rouge.png"),
@@ -83,52 +83,42 @@ box_obstacles = [pygame.image.load(r".\obstacles\Caisse_Obstacle_1.png"),
 
 bird_obstacles = [red_bird_obstacle, blue_bird_obstacle, purple_bird_obstacle, pink_bird_obstacle]
 
+# Initialisation des images du Menu Start et Rules
 start_menu_bg_image = pygame.image.load(r".\images\bg_city_menu.png").convert()
 start_menu_title_image = pygame.image.load(r".\images\title.png")
-
 start_button_unpressed_image = pygame.image.load(r".\images\start_button_unpressed.png")
 start_button_pressed_image = pygame.image.load(r".\images\start_button_pressed.png")
-
 rules_button_unpressed_image = pygame.image.load(r".\images\rules_button_unpressed.png")
 rules_button_pressed_image = pygame.image.load(r".\images\rules_button_pressed.png")
-
-# Characters
-characters_bg_image = pygame.image.load(r".\images\bg_character_menu.png")
-
 bg_rules = pygame.image.load(r".\images\bg_rules.png")
 
+# Initialisation des images du Menu des Personnages
+characters_bg_image = pygame.image.load(r".\images\bg_character_menu.png")
 character_choice_1 = [pygame.image.load(r".\characters\Choice_1.0.png"),
                       pygame.image.load(r".\characters\Choice_1.1.png")]
-
 character_choice_2 = [pygame.image.load(r".\characters\Choice_2.0.png"),
                       pygame.image.load(r".\characters\huey_lock.png"),
                       pygame.image.load(r".\characters\Choice_2.1.png")]
-
-
 character_choice_3 = [pygame.image.load(r".\characters\Choice_3.0.png"),
                       pygame.image.load(r".\characters\Saitama_Lock.png"),
                       pygame.image.load(r".\characters\Choice_3.1.png")]
 
-
+# Initialisation des images du Menu Pause et perdu
 game_over = pygame.image.load(r".\images\Game_Over_2.png")
-
 pause_menu = pygame.image.load(r".\images\Pause_menu.png")
-
 resume_button_unpressed = pygame.image.load(r".\images\Resume_Unpressed.png")
 resume_button_pressed = pygame.image.load(r".\images\Resume_pressed.png")
-
 quit_button_unpressed = pygame.image.load(r".\images\Quit_Unpressed.png")
 quit_button_pressed = pygame.image.load(r".\images\Quit_Pressed.png")
-
 play_again_button_unpressed = pygame.image.load(r".\images\Play_Again_Unpressed.png")
 
+# Initialisation des variables pour les Boutons
 start_button = Button(662, 489, start_button_unpressed_image)
 rules_button = Button(782, 803, rules_button_unpressed_image)
-
 resume_button_img = resume_button_unpressed
 quit_button_img = quit_button_unpressed
 
-# Variables
+# Définition des variables du jeu
 game_speed = 10
 initial_game_speed = 10
 game_score = 0
@@ -138,36 +128,38 @@ menu_close = False
 game_pause = False
 game_on = True
 rules = False
-
 y_pause = 488
 x_pause = 659
 
+# Initialisation des variables des polices d'écritures
+font = pygame.font.Font(r".\police\Myfont-Regular.ttf", 50)
+font_super_kinds = pygame.font.Font(r".\police\Super_Kinds.ttf", 50)
 
 #######################################################################################################################
 ############################################### Classe du joueur ######################################################
 #######################################################################################################################
 
+# Classe pour le joueur avec ses mouvements et états
 class Player:
     # Position du joueur par défaut
-    x_pos = 100  # jumping = 83  / running = 40
-    y_pos = 795  # jumping = 620 / running = 795
+    x_pos = 100
+    y_pos = 795
 
-    # Déclarations des variables d'initialisation du joueur
     def __init__(self):
-        # Images des différents états du joueur
+        # Images pour chaque état du joueur
         self.bending_down_img = bending_down
         self.run_img = running
         self.jump_img = jumping
 
         self.temp = 0
 
-        # Dans quel état est le joueur
+        # État initial : course
         self.bending_down = False
         self.run = True
         self.jump = False
         self.alive = True
 
-        # Positionnement du joueur et l'image affiché
+        # Position et image actuelles
         self.step_index = 0
         self.image = self.run_img[0]
         self.rect = pygame.Rect(100, 795, 150, 195)
@@ -181,9 +173,7 @@ class Player:
         self.run_index = 48
         self.index_speed = self.run_index
 
-        self.mask_surface = pygame.Surface(self.image.get_size())
-
-    # Cette fonction servira à mettre à jour l'état et l'image du personnage en fonction de ce qu'il fait dans le jeu.
+    # Met à jour l'état du joueur selon l'entrée utilisateur
     def update(self, user_input):
         if self.alive:
             if self.bending_down:
@@ -199,25 +189,25 @@ class Player:
         if self.step_index >= self.index_speed:
             self.step_index = 0
 
-        # Si le joueur appuye pour sauter et que le joueur n'est pas dans les aires (n'a pas sauté), on vas donc dire que le joueur peut sauter
+        # Gestion du saut
         if user_input[pygame.K_UP] and not self.jump:
                 self.bending_down = False
                 self.run = False
                 self.jump = True
 
-        # Si le joueur appuye pour se baisser et que le joueur n'est pas dans les aires (n'a pas sauté), on vas donc dire que le joueur peut se baisser
+        # Gestion de se baisser
         elif user_input[pygame.K_DOWN] and not self.jump:
             self.bending_down = True
             self.run = False
             self.jump = False
 
-        # Si le joueur n'est pas entrain dans les aires (n'a pas sauté) ou qu'il ne c'est pas baissé, on vas donc dire que le joueur peut courrir
+        # Gestion de la course automatique
         elif not (self.jump or user_input[pygame.K_DOWN]):
             self.bending_down = False
             self.run = True
             self.jump = False
 
-    # Fonction pour se baisser
+    # Mouvement du personnage en se baissant
     def bending_down_movement(self):
         if not game_pause:
             self.rect = pygame.Rect(140, 925, 250, 50)
@@ -227,7 +217,7 @@ class Player:
             self.step_index += 1
             self.temp += 1
 
-    # Fonction pour courrir
+    # Mouvement du personnage en course
     def run_movement(self):
         if not game_pause:
             self.rect = pygame.Rect(100, 795, 150, 195)
@@ -238,7 +228,7 @@ class Player:
             self.rect.y = self.y_pos
             self.step_index += 1
 
-    # Fonction pour sauter
+    # Mouvement du personnage en sautant
     def jump_movement(self):
         if not game_pause:
             self.image = self.jump_img[self.step_index // 8]
@@ -251,10 +241,8 @@ class Player:
                 self.jump = False
                 self.velocity = self.jump_height
 
-    # Fonction pour afficher le personnage
+    # Dessine le joueur à l'écran
     def draw(self, screen_parameter):
-        # Affiche le masque derrière le joueur pour gèrer les colisions
-        #screen_parameter.blit(self.mask_surface, (self.rect.x, self.rect.y))
         screen_parameter.blit(self.image, (self.x_pos, self.y_pos))
 
 
@@ -262,6 +250,7 @@ class Player:
 ################################### Classe qui permet de créer des obstacles ##########################################
 #######################################################################################################################
 
+# Classe pour les obstacles
 class Obstacle:
     global game_speed
 
@@ -273,7 +262,7 @@ class Obstacle:
         self.rect = self.image[self.type].get_rect()
         self.rect.x = screen_width
 
-    # Permet de mettre à jour l'emplacement de l'objet qui bouge
+    # Mise à jour de la position de l'obstacle
     def update(self):
         self.rect.x -= game_speed
 
@@ -329,11 +318,13 @@ class Bird(Obstacle):
                 self.rect.x -= (game_speed - 6)
 
 
+# Fonction pour le quitter le jeu
 def quit_game():
     global game_on
     game_on = False
 
 
+# Fonction pour le lancement du Menu Pause
 def resume_game():
     global game_pause, game_speed, game_speed_backup
     game_speed = game_speed_backup
@@ -344,11 +335,10 @@ def resume_game():
 ########################################## Fonction de lancement du jeu ###############################################
 #######################################################################################################################
 
+# Fonction principale pour le lancement du jeu
 def Game():
     global obstacles, game_speed, game_speed_backup, game_pause, y_pause, x_pause, resume_button_img, quit_button_img, game_on, obstacle, game_current_score
     timer = pygame.time.Clock()
-
-    # Joueur
     player = Player()
 
     # Image cordonnées
@@ -357,29 +347,32 @@ def Game():
     middle_bg_x = 0
     front_bg_x = 0
 
-    # Liste des obstacles
+    # Initialisation des obstacles
     obstacles = []
 
     # Score
     game_score = 0
-    font = pygame.font.Font(r".\police\Myfont-Regular.ttf", 50)
 
+    # Fonction de calcul et d'affichage du score
     def Score():
         global game_score, game_speed, game_speed_backup, start_menu
         text_x = 1850
         text_score_x = 1685
         text_color = (255, 248, 189)
 
+        # Si le joueur est vivant, le score augmente en continu
         if player.alive:
             if not game_pause:
-                game_score += 10
+                game_score += 10 # Augmente le score
                 game_speed_backup = game_speed
 
+            # Augmente la vitesse de jeu tous les 1000 points jusqu'à un maximum de 30
             if game_score % 1000 == 0:
                 if game_speed <= 30:
-                    game_speed += 0.3
+                    game_speed += 0.3 # Accélère progressivement le jeu
                     game_score += 20
 
+            # Ajuste les positions de texte en fonction du nombre de chiffres dans le score
             if game_score > 99:
                 text_score_x = 1675
 
@@ -395,19 +388,21 @@ def Game():
                 text_x = 1795
                 text_score_x = 1565
 
+            # Création des textes de score et affichage à l'écran
             text_score = font.render("Score: ", True, text_color)
-            text = font.render(str(game_score), True, text_color)
             text_score_rect = text_score.get_rect()
             text_score_rect.center = (text_score_x, 40)
 
+            text = font.render(str(game_score), True, text_color)
             text_rect = text.get_rect()
             text_rect.center = (text_x, 40)  # 100000 = 1670 / 10000 = 1685 / 1000 = 1700 / 100 = 1725
+
             screen.blit(text_score, text_score_rect)
             screen.blit(text, text_rect)
 
             return game_score
 
-    # Function to reset the game state
+    # Permet de relancer une partie à l'état de base
     def reset_game():
         global game_score, game_speed, obstacles
         game_score = 0
@@ -416,7 +411,7 @@ def Game():
         obstacles.clear()  # Clear all current obstacles
 
 
-    # Boucler tant que le jeu n'est pas fini
+    # Boucle principale du jeu
     while game_on:
         x_quit_coords = 787
         y_quit_coords = 784
@@ -424,18 +419,19 @@ def Game():
         x_resume_coords = 659
         y_resume_coords = 488
 
+        # Gestion des événements
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_on = False
 
-        # Keyboard Output
+        # Récupération des entrées clavier
         user_input = pygame.key.get_pressed()
 
-        # Quitter le jeu avec la touche Q
+        # Quitte le jeu si la touche 'Q' est enfoncée
         if user_input[pygame.K_q]:
             game_on = False
 
-        # Affichage de l'arrière plan
+        # Affichage des éléments de fond avec un défilement pour simuler le mouvement
         screen.blit(sky, (sky_bg_x, 0))
         screen.blit(city, (city_bg_x, 0))
         screen.blit(middle, (middle_bg_x, 0))
@@ -443,17 +439,20 @@ def Game():
         resume_button = Button(x_resume_coords, y_resume_coords, resume_button_img)
         quit_button = Button(x_quit_coords, y_quit_coords, quit_button_img)
 
-        # Affichage de l'écran et mise à jour des inputs pour vérifier si on doit modifier l'état du personnage.
+        # Affichage et mise à jour du joueur
         player.draw(screen)
         player.update(user_input)
 
-        # Si le joueur est toujours en vie et que l'arrière plan est arrivé à sa limite (-5350), on le reset en le mettant à nouveau au début (-1521)
+        # Si le joueur est en vie, met à jour le score et défile le fond
         if player.alive:
+            # Met le jeu en pause avec la touche 'Échap'
             if user_input[pygame.K_ESCAPE]:
                 game_pause = True
 
+            # Met à jour le score
             game_current_score = Score()
 
+            # Défile les images de fond pour créer un effet de mouvement
             if not game_pause:
                 # Vitesse à laquelle le arrière plan vas défiler
                 sky_bg_x += -abs(game_speed) + 3
@@ -461,6 +460,7 @@ def Game():
                 middle_bg_x += -abs(game_speed) + 1
                 front_bg_x += -abs(game_speed)
 
+            # Réinitialise les images de fond lorsque leur fin est atteinte
             if sky_bg_x <= -1920:
                 sky_bg_x = 0
             if city_bg_x <= -1824:
@@ -472,40 +472,42 @@ def Game():
 
             temp = random.randint(0, 3)
 
-            # S'il n'y a aucun obstacle dans la liste ajouter un obstacle aléatoirement
+            # Gère l'apparition aléatoire des obstacles
             if len(obstacles) == 0:
+                # Ajoute un obstacle aléatoire parmi les types disponibles
                 if random.randint(0, 2) == 0:
                     obstacles.append(Box(box_obstacles))
                 elif random.randint(0, 2) == 1:
-                    #obstacles.append(Box(box_obstacles))
                     obstacles.append(Bird(bird_obstacles[temp]))
                 elif random.randint(0, 2) == 2:
                     obstacles.append(Tire(pneu_obstacle))
 
 
-        # Affiche les obstacles sur l'écran et si le joueur est au même endroit que l'obstacle afficher la hitbox en rouge
+        # Affiche chaque obstacle et vérifie les collisions avec le joueur
         for obstacle in obstacles:
             obstacle.draw(screen)
             obstacle.update()
 
+            # Si collision entre le joueur et l'obstacle, le joueur meurt et le jeu s'arrête
             if player.rect.colliderect(obstacle.rect):
-                #pygame.draw.rect(screen, (255, 0, 0), player.rect, 2)
                 player.alive = False
                 obstacle.alive = False
-                game_speed = 0
+                game_speed = 0 # Arrête le défilement
 
+        # Gère le menu de pause si le jeu est en pause
         if game_pause:
-            game_speed = 0
+            game_speed = 0 # Arrête le défilement du jeu
             screen.blit(pause_menu, (0, 0))
             resume_button.draw(screen)
             quit_button.draw(screen)
 
+            # Vérifie si le bouton de reprise est cliqué pour continuer
             if resume_button.clicked:
                 resume_button_img = resume_button_pressed
-
                 t_resume = Timer(0.15, resume_game)
                 t_resume.start()
 
+            # Vérifie si le bouton de quitter est cliqué pour terminer le jeu
             if quit_button.clicked:
                 quit_button_img = quit_button_pressed
                 t_quit = Timer(0.15, quit_game)
@@ -513,27 +515,29 @@ def Game():
         else:
             resume_button_img = resume_button_unpressed
 
+        # Affichage de l'écran de Game Over si le joueur est mort
         if not player.alive:
             screen.blit(game_over, (0, 0))
-            play_again_button = Button(0, 0, play_again_button_unpressed)
+            play_again_button = Button(450, 590, play_again_button_unpressed)
             play_again_button.draw(screen)
 
+            # Vérifie si le score actuel est le meilleur score et le met à jour si nécessaire
             tuple_best_score = search_best_score()
             int_best_score = int(tuple_best_score[0])
-
             if game_current_score > int_best_score:
                 edit_score(int(game_current_score))
 
+            # Relance le jeu si le bouton "Rejouer" est cliqué
             if play_again_button.clicked:
                 reset_game()
 
-        # FPS
+        # Limite la vitesse d'exécution à la valeur d'images par seconde (FPS)
         timer.tick(fps)
 
-        # Refresh de la page
+        # Rafraîchit l'affichage de l'écran
         pygame.display.update()
 
-    # QUIT
+    # Quitte pygame à la fin de la boucle de jeu
     pygame.quit()
 
 
@@ -541,61 +545,68 @@ def Game():
 ########################################## Lancement du Menu Personnages ##############################################
 #######################################################################################################################
 
+# Fonction qui affiche le menu de choix de personnages et permet au joueur de sélectionner un personnage
 def Choice_Characters_Menu():
     global running
 
+    # Variables d'état du menu et de gestion du temps
     characters_menu = True
     timer = pygame.time.Clock()
     temp = 0
 
+    # Création des boutons pour chaque personnage
     character_1 = Button(564, 158, character_choice_1[0])
     character_2 = Button(0, 0, character_choice_2[2])
     character_3 = Button(0, 0, character_choice_3[2])
 
-    # Boucler tant que le jeu n'est pas fini
+    # Boucle principale du menu de sélection des personnages
     while characters_menu:
+        # Gère les événements, permet de quitter le menu
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 characters_menu = False
 
-        # Keyboard Output
+        # Récupération des entrées clavier
         user_input = pygame.key.get_pressed()
 
-        # Quitter le jeu avec la touche Q
+        # Quitte le menu de sélection de personnage si la touche 'Q' est enfoncée
         if user_input[pygame.K_q]:
             characters_menu = False
 
-        # Affichage de l'arrière plan
+        # Affiche l'arrière-plan du menu des personnages
         screen.blit(characters_bg_image, (0, 0))
 
-        # Vérifie si le score nécessaire pour débloquer les personnages est atteint, puis met à jour la clé étrangère du personnage
+        # Vérifie si les scores requis sont atteints pour débloquer les personnages
         if search_score_to_unlock(1) <= search_best_score():
-            edit_id_character(1)
+            edit_id_character(1)  # Débloque le personnage 1
 
         if search_score_to_unlock(2) <= search_best_score():
-            edit_id_character(2)
+            edit_id_character(2)  # Débloque le personnage 2
 
         if search_score_to_unlock(3) <= search_best_score():
-            edit_id_character(3)
+            edit_id_character(3)  # Débloque le personnage 3
 
-        # Récupère et affiche l'ID du personnage sélectionné
+        # Récupère l'ID du personnage sélectionné par l'utilisateur
         tuple_id_character = search_id_character()
         int_id_character = int(tuple_id_character[0])
 
+        # Affiche les boutons pour chaque personnage et gère les interactions
         if temp > 6:
             character_1_state = character_1.draw(screen)
+            # Change l'image du bouton si le personnage est sélectionné
             if character_1_state[1]:
                 character_1 = Button(564, 158, character_choice_1[1])
             else:
                 character_1 = Button(564, 158, character_choice_1[0])
 
+            # Si le bouton du personnage 1 est cliqué, commence le jeu avec ce personnage
             if character_1_state[0]:
                 characters_menu = False
                 Game()
 
-            # Affiche un cadenas ou le personnage 2 en fonction de l'ID
+            # Gère l'affichage du personnage 2 ou d'un cadenas si verrouillé
             if int_id_character < 2:
-                screen.blit(character_choice_2[1], (0, 0))
+                screen.blit(character_choice_2[1], (0, 0))  # Affiche le cadenas
             else:
                 character_2_state = character_2.draw(screen)
 
@@ -605,20 +616,19 @@ def Choice_Characters_Menu():
                     character_2 = Button(0, 0, character_choice_2[0])
 
                 if character_2_state[0]:
-
+                    # Définit les images de course pour le personnage 2
                     running = [pygame.image.load(r".\running\Huey_step_1.png"),
                                pygame.image.load(r".\running\Huey_step_2.png"),
                                pygame.image.load(r".\running\Huey_step_3.png"),
                                pygame.image.load(r".\running\Huey_step_4.png"),
                                pygame.image.load(r".\running\Huey_step_5.png"),
                                pygame.image.load(r".\running\Huey_step_6.png")]
-
                     characters_menu = False
                     Game()
 
-            # Affiche un cadenas ou le personnage 3 en fonction de l'ID
+            # Gère l'affichage du personnage 3 ou d'un cadenas si verrouillé
             if int_id_character < 3:
-                screen.blit(character_choice_3[1], (0, 0))
+                screen.blit(character_choice_3[1], (0, 0))  # Affiche le cadenas
             else:
                 character_3_state = character_3.draw(screen)
 
@@ -628,95 +638,127 @@ def Choice_Characters_Menu():
                     character_3 = Button(1200, 0, character_choice_3[0])
 
                 if character_3_state[0]:
+                    # Définit les images de course pour le personnage 3
                     running = [pygame.image.load(r".\running\saitama_step_1.png"),
                                pygame.image.load(r".\running\saitama_step_2.png"),
                                pygame.image.load(r".\running\saitama_step_3.png"),
                                pygame.image.load(r".\running\saitama_step_4.png"),
                                pygame.image.load(r".\running\saitama_step_5.png"),
                                pygame.image.load(r".\running\saitama_step_6.png")]
-
                     characters_menu = False
                     Game()
 
+        # Augmente temporairement pour initialiser l'affichage du menu
         if temp <= 6:
             temp += 1
 
-        # FPS
+        # Limite la vitesse d'exécution de la boucle à la valeur FPS définie
         timer.tick(fps)
 
-        # Refresh de la page
+        # Rafraîchit l'affichage de l'écran
         pygame.display.update()
 
-    # QUIT
+    # Quitte pygame lorsque le menu est fermé
     pygame.quit()
+
 
 #######################################################################################################################
 ############################################# Lancement du Menu Start #################################################
 #######################################################################################################################
 
-
+# Fonction qui ferme le menu de démarrage et lance le jeu
 def quit_start_menu():
     global start_menu
     start_menu = False
 
 
+# Active l'affichage des règles du jeu dans le menu de démarrage
 def turn_true_rules():
     global rules
     rules = True
 
 
+# Désactive l'affichage des règles du jeu pour revenir au menu principal
 def turn_false_rules():
     global rules
     rules = False
 
 
+# Instance temporaire du joueur pour l'affichage dans le menu des règles
 temp_player = Player()
 
+# Boucle principale du menu de démarrage, s'affiche jusqu'à ce que le jeu commence
 while start_menu:
     timer = pygame.time.Clock()
 
+    # Gère les événements comme la fermeture de la fenêtre
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             start_menu = False
 
-    game_pause = False
-
-    # Récupere la position de la souris
+    # Récupère la position de la souris pour détecter les interactions avec les boutons
     mouse_pos = pygame.mouse.get_pos()
 
-    # Ferme le jeu si on appuye sur Q
+    # Quitte le menu de démarrage si la touche 'Q' est enfoncée
     pressed = pygame.key.get_pressed()
-
     if pressed[pygame.K_q]:
         start_menu = False
 
+    # Affichage du menu principal si les règles ne sont pas actives
     if not rules:
         # Affichage des images
-        screen.blit(start_menu_bg_image, (0, 0))
-        screen.blit(start_menu_title_image, (11, 52))
+        screen.blit(start_menu_bg_image, (0, 0)) # Affiche le fond du menu de démarrage
+        screen.blit(start_menu_title_image, (11, 52)) # Affiche le titre du jeu
+
+        # Affiche les boutons de démarrage et de règles
         start_button.draw(screen)
         rules_button.draw(screen)
 
-        # On change l'image du bouton
+        # Si le bouton de démarrage est cliqué, lance le jeu en quittant le menu
         if start_button.clicked:
             start_button = Button(602, 489, start_button_pressed_image)
             t_start_menu = Timer(0.15, quit_start_menu)
             t_start_menu.start()
     else:
+        # Affiche l'écran des règles si l'option est sélectionnée
         screen.blit(bg_rules, (0, 0))
-        temp_player.rect.x = 830
 
+        # Change la position du joueur temporaire pour la démonstration
+        temp_player.x_pos = 830
+
+        # Affiche les instructions des commandes
+        jump_text = font_super_kinds.render("Jump", True, (0, 0, 0))
+        jump_text_rect = jump_text.get_rect()
+        jump_text_rect.x = 440
+        jump_text_rect.y = 200
+
+        bending_down_text = font_super_kinds.render("Bending Down", True, (0, 0, 0))
+        bending_down_text_rect = jump_text.get_rect()
+        bending_down_text_rect.x = 440
+        bending_down_text_rect.y = 500
+
+        pause_menu_text = font_super_kinds.render("Pause Menu", True, (0, 0, 0))
+        pause_menu_text_rect = pause_menu_text.get_rect()
+        pause_menu_text_rect.x = 440
+        pause_menu_text_rect.y = 820
+
+        screen.blit(jump_text, jump_text_rect)
+        screen.blit(bending_down_text, bending_down_text_rect)
+        screen.blit(pause_menu_text, pause_menu_text_rect)
+
+        # Affiche le personnage temporaire pour démontrer les contrôles
         temp_player.draw(screen)
         temp_player.update(pressed)
 
-        back_button = Button(1500, 500, quit_button_unpressed)
+        # Affiche le bouton de retour pour quitter l'écran des règles
+        back_button = Button(1500, 120, quit_button_unpressed)
         back_button.draw(screen)
         if back_button.clicked:
             back_button = Button(1500, 500, quit_button_pressed)
             t_rules = Timer(0.15, turn_false_rules)
             t_rules.start()
 
-    # On change l'image du bouton
+    # Si le bouton de règles est cliqué, affiche l'écran des règles
     if rules_button.clicked:
         rules_button = Button(782, 803, rules_button_pressed_image)
         t_rules = Timer(0.15, turn_true_rules)
@@ -724,10 +766,12 @@ while start_menu:
     else:
         rules_button = Button(782, 803, rules_button_unpressed_image)
 
-    # Mets à jour l'affichage
+    # Rafraîchit l'affichage de l'écran du menu
     pygame.display.flip()
 
-    # FPS
+    # Limite la vitesse d'exécution de la boucle à la valeur d'images par seconde (FPS)
     timer.tick(fps)
 
+
+# Démarre le menu de sélection de personnage une fois que le menu de démarrage est terminé
 Choice_Characters_Menu()

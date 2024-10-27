@@ -15,7 +15,7 @@ class Button:
         self.clicked = False
         self.image_state = False
 
-
+    # Dessine le bouton et gère les clics
     def draw(self, screen):
         # print(pos)
         pos = pygame.mouse.get_pos()
